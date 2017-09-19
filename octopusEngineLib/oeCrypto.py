@@ -2,7 +2,46 @@ import time, datetime
 #from datetime import datetime
 #from urllib import urlopen
 import requests 
-import json  
+import json
+
+class oeCrypto5():
+  def __init__(self,coin,wallAdr):
+      self.coin = coin
+      self.wallAdr = wallAdr
+    
+  def setCoin(self,coin):     self.coin = coin
+  def getCoin(self):     return self.coin
+  def getAdr(self):     return self.wallAdr
+  
+  def getCourse(self):
+      if (self.coin=="BTC"):
+        jBtc = requests.get("https://www.bitstamp.net/api/ticker/")
+        Xtcc = jBtc.json()['last']
+      if (self.coin=="LTC"):
+        jLtc = requests.get("https://www.bitstamp.net/api/v2/ticker/ltcusd/")
+        Xtcc = jLtc.json()['last']     
+      return Xtcc  
+  
+  def getTxJson(self):
+      if (self.coin=="BTC"):
+        resourceBTC = "https://chain.so/api/v2/get_tx_received/BTC/"+self.wallAdr
+        self.j = requests.get(resourceBTC)
+      if (self.coin=="LTC"):
+        resourceBTC = "https://chain.so/api/v2/get_tx_received/LTC/"+self.wallAdr
+        self.j = requests.get(resourceBTC)     
+      return self.j
+    
+  def getTxJsonLast(self):
+      if (self.coin=="BTC"):
+        resourceBTC = "https://chain.so/api/v2/get_tx_received/BTC/"+self.wallAdr
+        j = requests.get(resourceBTC)
+      if (self.coin=="LTC"):
+        resourceBTC = "https://chain.so/api/v2/get_tx_received/LTC/"+self.wallAdr
+        j = requests.get(resourceBTC)
+      jsonData = j.json()['data']['txs']
+      jsonDataLast = j.json()['data']['txs'][len(jsonData)-1]  
+      return jsonDataLast, len(jsonData) # jsonLast + number of tx   
+
 
 #-----------------------------kurz
 #bcfile = urlopen("https://www.bitstamp.net/api/ticker/").read()
