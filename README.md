@@ -1,5 +1,11 @@
 # cryptomat
 (c) 2015-17 octopusengine.org | newreality.eu
+
+<img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/.png" alt="fig5-ball-schematic.png" width="650">
+<br />
+
+
+
 <hr />
 if exist "new" transaction in blockchain.info > action<br /><br />
 #block-0.2 - 2015/12 - main idea + serial display QR code<br />
