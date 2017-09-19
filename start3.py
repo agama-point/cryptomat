@@ -29,6 +29,9 @@ from time import sleep
 from socket import gethostname, gethostbyname #getIp
 from time import sleep
 
+cB=oeCrypto5("BTC",wallAdrBTC)
+cL=oeCrypto5("LTC",wallAdrLTC)
+
 netOk = True #wifi test - todo
 debugPrint = True
 testMode = False
@@ -46,7 +49,8 @@ while i<numi:
   neXtxt("t0",str(numi-i))
   i +=1
   time.sleep(1)
-neXtxt("t0"," ")  
+neXtxt("t0"," ")
+
 #---------------------init---------------
 from threading import Thread, Event
 nexThread = True #running
@@ -71,61 +75,75 @@ def nexth(): ##thread
 
 # thread for reading
 thrnx = Thread(target=nexth)
+thrnx.daemon = True
 thrnx.start()
 
-if (debugPrint):
+#---------------------start---------------
+def oneAction():
+ if (debugPrint):
    print(">>> octopusengine.org/api --- getServerTime()")	
    print(getServerTime())
    print("")
       
-nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#addLog("T-"+nowTim+" | "+str(deltaMin)+ " min. | val:"+str(transValue)+" s")	 
-#addLog("> K:"+str(lastNum)+", $"+str(valUSD)+", a:"+str(amountS)+" s")
-addLog("T-"+nowTim+"*")
+ nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+ #addLog("T-"+nowTim+" | "+str(deltaMin)+ " min. | val:"+str(transValue)+" s")	 
+ #addLog("> K:"+str(lastNum)+", $"+str(valUSD)+", a:"+str(amountS)+" s")
+ addLog("T-"+nowTim+"*")
 
-#---------------------start---------------
-#---bitstamp BTC/USD LTC/USD
-Btcc = getBTCc()
-neXtxt("t0",str(Btcc)+" B/$ ") 
-time.sleep(1)
-Ltcc = getLTCc()
-neXtxt("t0",str(Ltcc)+" L/$ ") 
-time.sleep(2)
 
-if (debugPrint):
+ #---bitstamp BTC/USD LTC/USD
+ Btcc = getBTCc()
+ neXtxt("t0",str(Btcc)+" B/$ ") 
+ time.sleep(1)
+ Ltcc = getLTCc()
+ neXtxt("t0",str(Ltcc)+" L/$ ") 
+ time.sleep(2)
+
+ if (debugPrint):
    if (debugPrint): print(">>> bitstamp.net/api/ticker ---")	
    print("BTC:"+str(Btcc))
    print("LTC:"+str(Ltcc))   
 
 
-if (testMode):
-  print(">>> bitcoin last transaction ---")
+ if (testMode):
+  print("------------------------")  
+  print(">>>  last transaction ---"+cB.getCoin())
+  print("adr: "+cB.getAdr())
+  print(str(cB.getCourse()))
+  jsonDataLast=cB.getTxJsonLast()[0]
+  #print(str(jsonDataLast))
+  print("last > from "+str(cB.getTxJsonLast()[1]))
+  lastTransTime = datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S')
+  lastTransValue = jsonDataLast['value']
+  print("[time]"+lastTransTime)   
+  print("[value]"+lastTransValue)
+  
+  dtTrans = datetime.datetime.strptime(lastTransTime, '%Y-%m-%d %H:%M:%S')
+  dtTransUx = time.mktime(dtTrans.timetuple())
+  dtServer = datetime.datetime.strptime(getServerTime(), '%Y-%m-%d %H:%M:%S')
+  dtServerUx = time.mktime(dtServer.timetuple())
+  dtUx = dtServerUx-dtTransUx 
 
-  #------------BTC-------------------------- 
-  resourceBTC = "https://chain.so/api/v2/get_tx_received/BTC/"+wallAdrBTC
-  j = requests.get(resourceBTC)
-  #print(j.json()['data']['txs'])  
-  #arrayCnt = len(j.json()['data']['txs'])
-  jsonData = j.json()['data']['txs']
-  jsonDataLast = j.json()['data']['txs'][len(jsonData)-1]
+  print("")
+  print("--- dateTime transaction ---")
+  print(str(dtTrans) +" / "+ str(dtTransUx)) 
+  print(str(dtServer) +" / "+ str(dtServerUx))
+ 
+  print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600)))  
+  
+  
+  print("------------------------")
+  print(">>>  last transaction ---"+cL.getCoin())
+  print("adr: "+cL.getAdr())
+  print(str(cL.getCourse()))
+  print("---")
+  jsonDataLast=cL.getTxJsonLast()[0]
 
-  #print(j.json()['data']['txs'][0]['time']) 
-  #print(j.json()['data']['txs'][arrayCnt-1]['time'])  
-  print("last > from " + str(getNumJ(j)))
-  print(datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S'))
-  #print(j.json()['data']['txs'][arrayCnt-1]['value'])     
-  print(jsonDataLast['value']) 
-  time.sleep(2)
-
-  #------------LTC--------------------------  
-  resourceLTC = "https://chain.so/api/v2/get_tx_received/LTC/"+wallAdrLTC  
-  j = requests.get(resourceLTC) 
-  lastTransTime = datetime.datetime.fromtimestamp(int(getLastJ(j)['time'])).strftime('%Y-%m-%d %H:%M:%S')
-  lastTransValue = getLastJ(j)['value']
-  print("--- litecoin last transaction ---")
-  print("last > from " + str(getNumJ(j)))
-  print(lastTransTime)   
-  print(lastTransValue) 
+  print("last > from "+str(cL.getTxJsonLast()[1]))     
+  lastTransTime = datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S')
+  lastTransValue = jsonDataLast['value']
+  print("[time]"+lastTransTime)   
+  print("[value]"+lastTransValue)  
 
   dtTrans = datetime.datetime.strptime(lastTransTime, '%Y-%m-%d %H:%M:%S')
   dtTransUx = time.mktime(dtTrans.timetuple())
@@ -141,22 +159,22 @@ if (testMode):
   print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600))) 
 
 
-#----------------------select > read ---------------
-neXcmd("page select")
-neXtxt("ts1","::")
-neXtxt("ts2","BTC/USD")
-neXtxt("ts3",str(Btcc))
-neXtxt("ts4","-")
-neXtxt("ts5","LTC/USD")
-neXtxt("ts6",str(Ltcc))
-neXtxt("ts7","-")
+ #----------------------select > read ---------------
+ neXcmd("page select")
+ neXtxt("ts1","::")
+ neXtxt("ts2","BTC/USD")
+ neXtxt("ts3",str(Btcc))
+ neXtxt("ts4","-")
+ neXtxt("ts5","LTC/USD")
+ neXtxt("ts6",str(Ltcc))
+ neXtxt("ts7","-")
 
-cekej = True
-ccnt=0
-#s2.flushInput()
-#for rx in range (20):
+ cekej = True
+ ccnt=0
+ #s2.flushInput()
+ #for rx in range (20):
 
-while cekej: #cekani na stisk
+ while cekej: #cekani na stisk
      ccnt=ccnt+1
      ctu = nxRead
      #neXtxt("d0",str(ccnt) + ">"+str(ctu))
@@ -201,13 +219,13 @@ while cekej: #cekani na stisk
      #   nic = True
      time.sleep(0.7)
  
-time.sleep(2)
+ time.sleep(2)
 
-neXcmd("page selecoin")
-ctu = ""
-cekej2 = True
-ccnt=0
-while cekej2: #cekani na stisk
+ neXcmd("page selecoin")
+ ctu = ""
+ cekej2 = True
+ ccnt=0
+ while cekej2: #cekani na stisk
      ccnt=ccnt+1
      ctu = nxRead
      #neXtxt("d0",str(ccnt) + ">"+str(ctu))
@@ -226,18 +244,26 @@ while cekej2: #cekani na stisk
      #    cekej = False 
      
      time.sleep(0.7)
-print("selected currency: "+seleC)     
-#-----------------------qr----------------------     
-#if isJmp1(): text="off-line"    
-#else: text="on-line"  
-#neXtxt("d0",text)
+ print("selected currency: "+seleC)     
+ #-----------------------qr----------------------     
+ # if isJmp1(): text="off-line"    
+ #else: text="on-line"  
+ #neXtxt("d0",text)
 
-neXcmd("page qr")
-neXcmd("page qr")
-#am =0.0112233
-##valUSD=1
+ neXcmd("page qr")
+ neXcmd("page qr")
+ #am =0.0112233
+ ##valUSD=1
 
-if(seleC=="BTC"):
+ neXtxt("t10","TO PAY:")   
+ neXtxt("t0",seleC)   
+ text="$"+str(valUSD)   
+ neXtxt("t4",text)
+ text="> "+str(valUSD*CZKUSD)+" Kc"    
+ neXtxt("t6",text)
+ time.sleep(0.2)   
+
+ if(seleC=="BTC"):
   neXtxt("t1","Bitcoin")   
   amount=round(float(valUSD/Btcc),8)
   amountS=amount*100000000
@@ -248,10 +274,13 @@ if(seleC=="BTC"):
   text="("+str(kuryCz) +" Kc)"   
   neXtxt("t3",text) 
   time.sleep(0.2)
+  text=str(amount)+" "+seleC   
+  neXtxt("t5",text) 
   neXtxt("t8",wallAdrBTC[:7]+"..."+wallAdrBTC[-7:])
+  displayQR(True,"bitecoin:"+wallAdrBTC+"?amount="+str(amount))
   #
   
-if(seleC=="LTC"):
+ if(seleC=="LTC"):
   neXtxt("t1","Litecoin")  
   amount=round(float(valUSD/Ltcc),8)
   amountS=amount*100000000
@@ -262,26 +291,15 @@ if(seleC=="LTC"):
   text="("+str(kuryCz) +" Kc)"   
   neXtxt("t3",text) 
   time.sleep(0.2)
+  text=str(amount)+" "+seleC   
+  neXtxt("t5",text) 
   neXtxt("t8",wallAdrLTC[:7]+"..."+wallAdrLTC[-7:])
+  #am =0.0112233
+  displayQR(True,"litecoin:"+wallAdrLTC+"?amount="+str(amount))
   
-neXtxt("t10","TO PAY:")   
-neXtxt("t0",seleC)   
-text="$"+str(valUSD)   
-neXtxt("t4",text) 
-text=str(amount)+" "+seleC   
-neXtxt("t5",text) 
-text="> "+str(valUSD*CZKUSD)+" Kc"    
-neXtxt("t6",text)
-time.sleep(0.2) 
-
-
-am =0.0112233
-displayQR(True,"litecoin:"+wallAdrLTC+"?amount="+str(am))
-
-
-cntWait=0
-cntWait2=0
-while (not isJmp1()):
+ cntWait=0
+ cntWait2=0
+ while (not isJmp1()):
       time.sleep(0.3)
       neXtxt("d0","PAY")  
       time.sleep(0.3)
@@ -294,13 +312,13 @@ while (not isJmp1()):
         cntWait2 = cntWait2+1   
       cntWait = cntWait+1 
 
-#pip(1800,0.05)
-pip1()   
-time.sleep(1) 
-neXcmd("page blockch") 
-neXcmd("page blockch")
-time.sleep(0.3) 
-if True:  
+ #pip(1800,0.05)
+ pip1()   
+ time.sleep(1) 
+ neXcmd("page blockch") 
+ neXcmd("page blockch")
+ time.sleep(0.3) 
+ if True:  
   if netOk: neXtxt("tb9"," ")
   else: neXtxt("tb9","sorry - off Line or net.Err")  
   
@@ -319,11 +337,9 @@ if True:
   #nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   dtServer = datetime.datetime.strptime(getServerTime(), '%Y-%m-%d %H:%M:%S')
   #dtServerS = dtServer[-8:]
-  dtDevice = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  dtDevice = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  
   
-  
-  #timDelta= int(nowTime)-int(txsTime) 
-  
+  #timDelta= int(nowTime)-int(txsTime)   
   
   neXtxt("tb2",txAmount)
   neXtxt("tb3","serverTime: "+str(dtServer)[-8:]) 
@@ -334,5 +350,133 @@ if True:
   neXtxt("tb7","device:  "+str(dtDevice)) 
   neXtxt("tb8"," ") 
   
-  ##neXtxt("tb9","transactionT "+transTime) 
+  ##neXtxt("tb9","transactionT "+transTime)
+  
+  
+  #------------------------ tx validation:
+  def oneValidation():
+    if(seleC=="LTC"):
+      jsonDataLast=cL.getTxJsonLast()[0]
+      jsonDataNum=cL.getTxJsonLast()[1]
+    if(seleC=="BTC"):
+      jsonDataLast=cB.getTxJsonLast()[0]
+      jsonDataNum=cB.getTxJsonLast()[1]    
+  
+    #print(str(jsonDataLast))
+    print("last > from "+str(cB.getTxJsonLast()[1]))
+    lastTransTime = datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S')
+    lastTransValue = jsonDataLast['value']
+    print("[time]"+lastTransTime)   
+    print("[value]"+lastTransValue)
+    
+    #UTC x local time
+  
+    dtTrans = datetime.datetime.strptime(lastTransTime, '%Y-%m-%d %H:%M:%S')
+    dtTransUx = time.mktime(dtTrans.timetuple())
+    dtServer = datetime.datetime.strptime(getServerTime(), '%Y-%m-%d %H:%M:%S')
+    dtServerUx = time.mktime(dtServer.timetuple())
+    dtUx = dtServerUx-dtTransUx 
+
+    print("")
+    print("--- dateTime transaction ---")
+    print(str(dtTrans) +" / "+ str(dtTransUx)) 
+    print(str(dtServer) +" / "+ str(dtServerUx))
+    print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600)))
+  
+    neXtxt("tb6","T:"+str(dtTrans) +" / "+ str(dtTransUx)) 
+    neXtxt("tb7","S:"+str(dtServer) +" / "+ str(dtServerUx)) 
+    neXtxt("tb8",str(dtServer-dtTrans) + "/"+str(dtUx)+ " m:"+str(int(dtUx/60))+ " h:"+str(int(dtUx/3600)))
+    
+    deltaMin = int(dtUx/60)
+    return deltaMin-120 #todo pekr
+  
+  for validLoop in range(6):
+     print("--- valid Loop" + str(validLoop))
+     #if(not isJmp1()): break     
+     
+     deltaMinVal=oneValidation()
+     okTrans=False
+     if(deltaMinVal<2):
+       okTrans=True 
+       okTxt= ".....OK..... "+ " | "+str(deltaMinVal)+ " min."
+       neXtxt("tb9",okTxt) 
+       break    
+     else:
+       okTxt= "NO TRANSACTION "+ " | "+str(deltaMinVal)+ " min."
+       neXtxt("tb9",okTxt)
+     time.sleep(5) 
+
+  for okLoop in range(6): 
+     neXtxt("tb9",okTxt)
+     time.sleep(1)  
+     neXtxt("tb9"," ") 	 
+     time.sleep(0.5)
+     
+  neXtxt("tb9",okTxt)
+  #nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+  #addLog("T-"+nowTim+" | "+str(deltaMin)+ " min. | val:"+str(transValue)+" s")	 
+  #addLog("> K:"+str(lastNum)+", $"+str(valUSD)+", a:"+str(amountS)+" s")	 	    
+  #time.sleep(3) 
+  #while (not isJmp1()): #waiting to press butt
+  #    time.sleep(0.5)
+  #    print("."),
+
+  if okTrans: 
+     pip1()   
+     neXcmd("page thanks") 
+     neXcmd("page thanks")
+     time.sleep(0.5)
+     
+     
+     """
+     addLog(">> OK > "+str(valUSD*25)+" Kc"  )
+     netLog("OkKc","BTC",valUSD*25)
+     
+     
+     GPIO.output(RELE1, False)
+     time.sleep(10)
+     GPIO.output(RELE1, True)
+     
+      
+     time.sleep(3)
+     neXtxt("tt1","$ "+str(valUSD))     
+     time.sleep(3)
+          
+       
+  while (not isJmp1()):
+		time.sleep(0.5)
+		nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+		neXtxt("tb7","date Time:  "+str(nowTim)) 
+		neXtxt("tb8","for next action > press BUTTON ") 
+		neXtxt("tt2","next") 
+		 
+		time.sleep(0.5)
+		neXtxt("tt2","prew")
+		neXtxt("tb8"," ") 
+  
+  """
+ #=====================================================================================================
+try:
+   #alarmLoop()
+   #thrnx.stop_here
+	#try:
+
+	#except:
+	#	print "FD config err."		
+	
+	while True:  
+	   print("-----------------------------------one Loop")       
+	   oneAction()
+
+except:
+    Err = True
+#except (KeyboardInterrupt, SystemExit), e:
+#	print "oops, error", e
+#	print "trying to gracefully shutdown child thread"
+#	print "stopped?", thrnx.stopped()
+#	thrnx.stop()
+#	print "stopped?", thrnx.stopped()
+#	thrnx.join()
+
+#print "exiting..."
 #-------------------------end --------------
