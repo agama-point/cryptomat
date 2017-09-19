@@ -25,9 +25,7 @@ import sys, os, subprocess, time, datetime
 #import json
 #from socket import gethostname, gethostbyname #getIp
 from time import sleep
-
 from socket import gethostname, gethostbyname #getIp
-from time import sleep
 
 cB=oeCrypto5("BTC",wallAdrBTC)
 cL=oeCrypto5("LTC",wallAdrLTC)
@@ -37,19 +35,7 @@ debugPrint = True
 testMode = False
 seleC = "?" #BTC/LTC
 CZKUSD = 22.5
-
-neXcmd("page intro")
-pip(1800,0.05)
-neXcmd("page intro")
-
-i=0
-numi = 3
-while i<numi:
-  print(i)	
-  neXtxt("t0",str(numi-i))
-  i +=1
-  time.sleep(1)
-neXtxt("t0"," ")
+seleC="???"
 
 #---------------------init---------------
 from threading import Thread, Event
@@ -73,13 +59,54 @@ def nexth(): ##thread
    time.sleep(0.7)  #0.7)
    cntx=cntx+1
 
-# thread for reading
-thrnx = Thread(target=nexth)
-thrnx.daemon = True
-thrnx.start()
+if __name__ == "__main__":
+    # thread for reading
+    thrnx = Thread(target=nexth)
+    thrnx.daemon = True
+    thrnx.start()
+
+
+#-------- fce
+def oneValidation():
+    if(seleC=="LTC"):
+      jsonDataLast=cL.getTxJsonLast()[0]
+      jsonDataNum=cL.getTxJsonLast()[1]
+    if(seleC=="BTC"):
+      jsonDataLast=cB.getTxJsonLast()[0]
+      jsonDataNum=cB.getTxJsonLast()[1]
+
+    print(str(jsonDataLast))
+    print("last > from "+str(cB.getTxJsonLast()[1]))
+    lastTransTime = datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S')
+    lastTransValue = jsonDataLast['value']
+    print("[time]"+lastTransTime)
+    print("[value]"+lastTransValue)
+
+    #UTC x local time
+
+    dtTrans = datetime.datetime.strptime(lastTransTime, '%Y-%m-%d %H:%M:%S')
+    dtTransUx = time.mktime(dtTrans.timetuple())
+    dtServer = datetime.datetime.strptime(getServerTime(), '%Y-%m-%d %H:%M:%S')
+    dtServerUx = time.mktime(dtServer.timetuple())
+    dtUx = dtServerUx-dtTransUx
+
+    print("")
+    print("--- dateTime transaction ---")
+    print(str(dtTrans) +" / "+ str(dtTransUx))
+    print(str(dtServer) +" / "+ str(dtServerUx))
+    print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600)))
+  
+    neXtxt("tb6","T:"+str(dtTrans) +" / "+ str(dtTransUx))
+    neXtxt("tb7","S:"+str(dtServer) +" / "+ str(dtServerUx))
+    neXtxt("tb8",str(dtServer-dtTrans) + "/"+str(dtUx)+ " m:"+str(int(dtUx/60))+ " h:"+str(int(dtUx/3600)))
+    
+    deltaMin = int(dtUx/60)
+    return deltaMin-120 #todo pekr
+
 
 #---------------------start---------------
 def oneAction():
+ global seleC
  if (debugPrint):
    print(">>> octopusengine.org/api --- getServerTime()")	
    print(getServerTime())
@@ -354,43 +381,9 @@ def oneAction():
   
   
   #------------------------ tx validation:
-  def oneValidation():
-    if(seleC=="LTC"):
-      jsonDataLast=cL.getTxJsonLast()[0]
-      jsonDataNum=cL.getTxJsonLast()[1]
-    if(seleC=="BTC"):
-      jsonDataLast=cB.getTxJsonLast()[0]
-      jsonDataNum=cB.getTxJsonLast()[1]    
   
-    #print(str(jsonDataLast))
-    print("last > from "+str(cB.getTxJsonLast()[1]))
-    lastTransTime = datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S')
-    lastTransValue = jsonDataLast['value']
-    print("[time]"+lastTransTime)   
-    print("[value]"+lastTransValue)
-    
-    #UTC x local time
   
-    dtTrans = datetime.datetime.strptime(lastTransTime, '%Y-%m-%d %H:%M:%S')
-    dtTransUx = time.mktime(dtTrans.timetuple())
-    dtServer = datetime.datetime.strptime(getServerTime(), '%Y-%m-%d %H:%M:%S')
-    dtServerUx = time.mktime(dtServer.timetuple())
-    dtUx = dtServerUx-dtTransUx 
-
-    print("")
-    print("--- dateTime transaction ---")
-    print(str(dtTrans) +" / "+ str(dtTransUx)) 
-    print(str(dtServer) +" / "+ str(dtServerUx))
-    print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600)))
-  
-    neXtxt("tb6","T:"+str(dtTrans) +" / "+ str(dtTransUx)) 
-    neXtxt("tb7","S:"+str(dtServer) +" / "+ str(dtServerUx)) 
-    neXtxt("tb8",str(dtServer-dtTrans) + "/"+str(dtUx)+ " m:"+str(int(dtUx/60))+ " h:"+str(int(dtUx/3600)))
-    
-    deltaMin = int(dtUx/60)
-    return deltaMin-120 #todo pekr
-  
-  for validLoop in range(6):
+  for validLoop in range(8):
      print("--- valid Loop" + str(validLoop))
      #if(not isJmp1()): break     
      
@@ -399,18 +392,22 @@ def oneAction():
      if(deltaMinVal<2):
        okTrans=True 
        okTxt= ".....OK..... "+ " | "+str(deltaMinVal)+ " min."
-       neXtxt("tb9",okTxt) 
-       break    
-     else:
+       neXtxt("tb9",okTxt)
+       break
+     else:       
+       neXtxt("tb9",str(validLoop))
+       time.sleep(2) 
        okTxt= "NO TRANSACTION "+ " | "+str(deltaMinVal)+ " min."
        neXtxt("tb9",okTxt)
-     time.sleep(5) 
+     time.sleep(15)
 
-  for okLoop in range(6): 
-     neXtxt("tb9",okTxt)
-     time.sleep(1)  
-     neXtxt("tb9"," ") 	 
-     time.sleep(0.5)
+  print("test - next?")
+  
+  #for okLoop in range(6): 
+  #   neXtxt("tb9",okTxt)
+  #   time.sleep(1)  
+  #   neXtxt("tb9"," ") 	 
+  #   time.sleep(0.5)
      
   neXtxt("tb9",okTxt)
   #nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -421,7 +418,7 @@ def oneAction():
   #    time.sleep(0.5)
   #    print("."),
 
-  if okTrans: 
+  if True: #okTrans: 
      pip1()   
      neXcmd("page thanks") 
      neXcmd("page thanks")
@@ -456,27 +453,42 @@ def oneAction():
   
   """
  #=====================================================================================================
-try:
-   #alarmLoop()
-   #thrnx.stop_here
-	#try:
 
-	#except:
-	#	print "FD config err."		
-	
-	while True:  
-	   print("-----------------------------------one Loop")       
-	   oneAction()
+if __name__ == "__main__":
+    neXcmd("page intro")
+    pip(1800,0.05)
+    neXcmd("page intro")
 
-except:
-    Err = True
-#except (KeyboardInterrupt, SystemExit), e:
-#	print "oops, error", e
-#	print "trying to gracefully shutdown child thread"
-#	print "stopped?", thrnx.stopped()
-#	thrnx.stop()
-#	print "stopped?", thrnx.stopped()
-#	thrnx.join()
+    i=0
+    numi = 3
+    while i<numi:
+      print(i)
+      neXtxt("t0",str(numi-i))
+      i +=1
+      time.sleep(1)
+    neXtxt("t0"," ")
 
-#print "exiting..."
-#-------------------------end --------------
+    try:
+       #alarmLoop()
+       #thrnx.stop_here
+            #try:
+
+            #except:
+            #	print "FD config err."		
+            
+            while True:  
+               print("-----------------------------------one Loop")       
+               oneAction()
+
+    except:
+        Err = True
+    #except (KeyboardInterrupt, SystemExit), e:
+    #	print "oops, error", e
+    #	print "trying to gracefully shutdown child thread"
+    #	print "stopped?", thrnx.stopped()
+    #	thrnx.stop()
+    #	print "stopped?", thrnx.stopped()
+    #	thrnx.join()
+
+    #print "exiting..."
+    #-------------------------end --------------
