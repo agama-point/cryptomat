@@ -1,7 +1,7 @@
 # cryptomat
 (c) 2015-17 octopusengine.org | newreality.eu
 
-<img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/machine17.png" alt="m17" width="650">
+<img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/machine17.png" alt="m17" width="320">
 <br />
 
 
