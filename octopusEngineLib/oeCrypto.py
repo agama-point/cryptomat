@@ -32,15 +32,27 @@ class oeCrypto5():
       return self.j
     
   def getTxJsonLast(self):
+      """
+     [0] jsonLast
+     [1] len
+     [2] value
+     [3] timeUx
+     [4] time str
+      """    
+      
       if (self.coin=="BTC"):
-        resource = "https://chain.so/api/v2/get_tx_received/BTC/"+self.wallAdr
-        j = requests.get(resource)
+         resource = "https://chain.so/api/v2/get_tx_received/BTC/"+self.wallAdr
+         j = requests.get(resource)
+      
       if (self.coin=="LTC"):
-        resource = "https://chain.so/api/v2/get_tx_received/LTC/"+self.wallAdr
-        j = requests.get(resource)
+         resource = "https://chain.so/api/v2/get_tx_received/LTC/"+self.wallAdr
+         j = requests.get(resource)
+        
       jsonData = j.json()['data']['txs']
-      jsonDataLast = j.json()['data']['txs'][-1] #[len(jsonData)-1]  
-      return jsonDataLast, len(jsonData) # jsonLast + number of tx   
+      jsonDataLast = j.json()['data']['txs'][-1] #[len(jsonData)-1]
+      lastTransTime = datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S')
+      #lastTransTime = jsonDataLast['time']
+      return jsonDataLast, len(jsonData), jsonDataLast['value'],jsonDataLast['time'],lastTransTime  ##,lastTransTime # jsonLast + number of tx   
 
 
 #-----------------------------kurz
