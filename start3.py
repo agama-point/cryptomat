@@ -32,7 +32,7 @@ cL=oeCrypto5("LTC",wallAdrLTC)
 
 netOk = True #wifi test - todo
 debugPrint = True
-testMode = False
+testMode = True
 seleC = "?" #BTC/LTC
 CZKUSD = 22.5
 seleC="???"
@@ -68,17 +68,21 @@ if __name__ == "__main__":
 
 #-------- fce
 def oneValidation():
+    """
+    [0] jsonLast
+    [1] len
+    [2] value
+    [3] timeUx
+    [4] time str
+    """
     if(seleC=="LTC"):
-      jsonDataLast=cL.getTxJsonLast()[0]
-      jsonDataNum=cL.getTxJsonLast()[1]
+        arrDataLast = cL.getTxJsonLast()      
     if(seleC=="BTC"):
-      jsonDataLast=cB.getTxJsonLast()[0]
-      jsonDataNum=cB.getTxJsonLast()[1]
-
-    print(str(jsonDataLast))
-    print("last > from "+str(cB.getTxJsonLast()[1]))
-    lastTransTime = datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S')
-    lastTransValue = jsonDataLast['value']
+        arrDataLast = cB.getTxJsonLast()
+    #print("selected: "+ seleC)    
+    print("last > from "+str(arrDataLast[1])) 
+    lastTransTime = arrDataLast[4]
+    lastTransValue = arrDataLast[2]
     print("[time]"+lastTransTime)
     print("[value]"+lastTransValue)
 
@@ -95,13 +99,16 @@ def oneValidation():
     print(str(dtTrans) +" / "+ str(dtTransUx))
     print(str(dtServer) +" / "+ str(dtServerUx))
     print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600)))
+    
+    deltaMin = round((float(dtUx/60)),2)-120 #todo pekr #timezone
+    deltaMin = int(deltaMin*100)/100
   
     neXtxt("tb6","T:"+str(dtTrans) +" / "+ str(dtTransUx))
     neXtxt("tb7","S:"+str(dtServer) +" / "+ str(dtServerUx))
-    neXtxt("tb8",str(dtServer-dtTrans) + "/"+str(dtUx)+ " m:"+str(int(dtUx/60))+ " h:"+str(int(dtUx/3600)))
-    
-    deltaMin = int(dtUx/60)
-    return deltaMin-120 #todo pekr
+    #neXtxt("tb8",str(dtServer-dtTrans) + "/"+str(dtUx)+ " m:"+str(int(dtUx/60))+ " h:"+str(int(dtUx/3600)))
+    neXtxt("tb8","Last.tx min."+str(deltaMin)+ " val:"+str(lastTransValue))
+
+    return deltaMin
 
 
 #---------------------start---------------
@@ -129,19 +136,23 @@ def oneAction():
  if (debugPrint):
    if (debugPrint): print(">>> bitstamp.net/api/ticker ---")	
    print("BTC:"+str(Btcc))
-   print("LTC:"+str(Ltcc))   
-
+   print("LTC:"+str(Ltcc))
 
  if (testMode):
-  print("------------------------")  
+  print("-----------test mode: -------------")  
   print(">>>  last transaction ---"+cB.getCoin())
   print("adr: "+cB.getAdr())
   print(str(cB.getCourse()))
-  jsonDataLast=cB.getTxJsonLast()[0]
-  #print(str(jsonDataLast))
-  print("last > from "+str(cB.getTxJsonLast()[1]))
-  lastTransTime = datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S')
-  lastTransValue = jsonDataLast['value']
+  #jsonDataLast=cB.getTxJsonLast()[0]
+  arrDataLast = cB.getTxJsonLast()
+  
+  #print("last > from "+str(cB.getTxJsonLast()[1]))
+  print("last > from "+str(arrDataLast[1]))  
+  
+  #lastTransTime = datetime.datetime.fromtimestamp(int(arrDataLast[3])).strftime('%Y-%m-%d %H:%M:%S')
+  lastTransTime = arrDataLast[4]
+  #lastTransValue = jsonDataLast['value']
+  lastTransValue = arrDataLast[2]
   print("[time]"+lastTransTime)   
   print("[value]"+lastTransValue)
   
@@ -158,22 +169,22 @@ def oneAction():
  
   print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600)))  
   
-  
   print("------------------------")
   print(">>>  last transaction ---"+cL.getCoin())
   print("adr: "+cL.getAdr())
   print(str(cL.getCourse()))
   print("---")
-  jsonDataLast=cL.getTxJsonLast()[0]
-
-  print("last > from "+str(cL.getTxJsonLast()[1]))     
-  lastTransTime = datetime.datetime.fromtimestamp(int(jsonDataLast['time'])).strftime('%Y-%m-%d %H:%M:%S')
-  lastTransValue = jsonDataLast['value']
+  arrDataLast = cL.getTxJsonLast()
+  #jsonDataLast=arrDataLast[0]
+    
+  print("last > from "+str(arrDataLast[1]))  
+  lastTransTime = arrDataLast[4]
+  lastTransValue = arrDataLast[2]
   print("[time]"+lastTransTime)   
-  print("[value]"+lastTransValue)  
+  print("[value]"+lastTransValue)
 
   dtTrans = datetime.datetime.strptime(lastTransTime, '%Y-%m-%d %H:%M:%S')
-  dtTransUx = time.mktime(dtTrans.timetuple())
+  dtTransUx = arrDataLast[3] #time.mktime(dtTrans.timetuple())
   dtServer = datetime.datetime.strptime(getServerTime(), '%Y-%m-%d %H:%M:%S')
   dtServerUx = time.mktime(dtServer.timetuple())
   dtUx = dtServerUx-dtTransUx 
@@ -183,9 +194,23 @@ def oneAction():
   print(str(dtTrans) +" / "+ str(dtTransUx)) 
   print(str(dtServer) +" / "+ str(dtServerUx))
  
-  print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600))) 
-
-
+  print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600)))
+  
+  
+#------------------------- start nextion
+ neXcmd("page intro")
+ pip(1800,0.05)
+ neXcmd("page intro")
+ i=0
+ numi = 3
+ while i<numi:
+      print(i)
+      neXtxt("t0",str(numi-i))
+      i +=1
+      time.sleep(1)
+ neXtxt("t0"," ")
+ time.sleep(5)
+  
  #----------------------select > read ---------------
  neXcmd("page select")
  neXtxt("ts1","::")
@@ -288,7 +313,7 @@ def oneAction():
  neXtxt("t4",text)
  text="> "+str(valUSD*CZKUSD)+" Kc"    
  neXtxt("t6",text)
- time.sleep(0.2)   
+ time.sleep(1)   
 
  if(seleC=="BTC"):
   neXtxt("t1","Bitcoin")   
@@ -326,6 +351,8 @@ def oneAction():
   
  cntWait=0
  cntWait2=0
+ time.sleep(2) 
+  
  while (not isJmp1()):
       time.sleep(0.3)
       neXtxt("d0","PAY")  
@@ -341,10 +368,10 @@ def oneAction():
 
  #pip(1800,0.05)
  pip1()   
- time.sleep(1) 
+ time.sleep(3) 
  neXcmd("page blockch") 
  neXcmd("page blockch")
- time.sleep(0.3) 
+ time.sleep(3) 
  if True:  
   if netOk: neXtxt("tb9"," ")
   else: neXtxt("tb9","sorry - off Line or net.Err")  
@@ -360,7 +387,7 @@ def oneAction():
   
   #txAmount =  "amount: "+str(amountS) + " Satoshi"
    
-  time.sleep(0.5)
+  time.sleep(2)
   #nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   dtServer = datetime.datetime.strptime(getServerTime(), '%Y-%m-%d %H:%M:%S')
   #dtServerS = dtServer[-8:]
@@ -371,25 +398,26 @@ def oneAction():
   neXtxt("tb2",txAmount)
   neXtxt("tb3","serverTime: "+str(dtServer)[-8:]) 
   neXtxt("tb4","deviceTime:  "+str(dtDevice)[-8:])
-  time.sleep(0.5)
+  time.sleep(2)
   neXtxt("tb5","Blockchain info testing | "+ver) 
   neXtxt("tb6","server: "+str(dtServer)) 
   neXtxt("tb7","device:  "+str(dtDevice)) 
   neXtxt("tb8"," ") 
-  
+  time.sleep(2)
   ##neXtxt("tb9","transactionT "+transTime)
   
   
   #------------------------ tx validation:
   
-  
+ 
   for validLoop in range(8):
      print("--- valid Loop" + str(validLoop))
-     #if(not isJmp1()): break     
+     if(isJmp1()): break     
      
      deltaMinVal=oneValidation()
      okTrans=False
-     if(deltaMinVal<2):
+     if(deltaMinVal<1.1):
+       pip1()  
        okTrans=True 
        okTxt= ".....OK..... "+ " | "+str(deltaMinVal)+ " min."
        neXtxt("tb9",okTxt)
@@ -399,17 +427,18 @@ def oneAction():
        time.sleep(2) 
        okTxt= "NO TRANSACTION "+ " | "+str(deltaMinVal)+ " min."
        neXtxt("tb9",okTxt)
-     time.sleep(15)
+     time.sleep(10+validLoop*2)
 
-  print("test - next?")
   
-  #for okLoop in range(6): 
-  #   neXtxt("tb9",okTxt)
-  #   time.sleep(1)  
-  #   neXtxt("tb9"," ") 	 
-  #   time.sleep(0.5)
+  pip1()
+  for okLoop in range(6): 
+     neXtxt("tb9",okTxt)
+     time.sleep(1)  
+     neXtxt("tb9"," ") 	 
+     time.sleep(0.5)
      
   neXtxt("tb9",okTxt)
+
   #nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   #addLog("T-"+nowTim+" | "+str(deltaMin)+ " min. | val:"+str(transValue)+" s")	 
   #addLog("> K:"+str(lastNum)+", $"+str(valUSD)+", a:"+str(amountS)+" s")	 	    
@@ -418,12 +447,14 @@ def oneAction():
   #    time.sleep(0.5)
   #    print("."),
 
-  if True: #okTrans: 
-     pip1()   
+  
+  if okTrans: 
+     pip1()
+     addLog(">>"+str(valUSD)+"$ /" +  seleC)
      neXcmd("page thanks") 
      neXcmd("page thanks")
      time.sleep(0.5)
-     
+          
      
      """
      addLog(">> OK > "+str(valUSD*25)+" Kc"  )
@@ -438,7 +469,6 @@ def oneAction():
      time.sleep(3)
      neXtxt("tt1","$ "+str(valUSD))     
      time.sleep(3)
-          
        
   while (not isJmp1()):
 		time.sleep(0.5)
@@ -451,35 +481,20 @@ def oneAction():
 		neXtxt("tt2","prew")
 		neXtxt("tb8"," ") 
   
-  """
+   """     
+  
  #=====================================================================================================
 
 if __name__ == "__main__":
-    neXcmd("page intro")
-    pip(1800,0.05)
-    neXcmd("page intro")
-
-    i=0
-    numi = 3
-    while i<numi:
-      print(i)
-      neXtxt("t0",str(numi-i))
-      i +=1
-      time.sleep(1)
-    neXtxt("t0"," ")
-
     try:
        #alarmLoop()
        #thrnx.stop_here
             #try:
-
             #except:
-            #	print "FD config err."		
-            
+            #	print "FD config err."
             while True:  
                print("-----------------------------------one Loop")       
                oneAction()
-
     except:
         Err = True
     #except (KeyboardInterrupt, SystemExit), e:
