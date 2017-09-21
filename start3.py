@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # ------------------------------
 # 2017/09 - RPi3 (wifi) + Python3
 # /dev/ttyAMA0 previously used to access the UART now connects to Bluetooth.
