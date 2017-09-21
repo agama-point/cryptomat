@@ -1,0 +1,47 @@
+> sudo chmod +x /home/pi/octopus-cryptomat/start3.py
+
+do hlavièky py pøidáno:
+#!/usr/bin/python
+
+> sudo nano /etc/systemd/system/octopus.service
+tam mám:
+-------------------------------------------
+[Unit]
+Description=OctopusEngine Super CryptoMachine
+After=network.target
+
+[Service]
+ExecStart=/home/pi/octopus-cryptomat/start3.py
+WorkingDirectory=/home/pi/octopus-cryptomat
+
+[Install]
+WantedBy=multi-user.target
+-------------------------------------------
+/ ano, mezera vadila, teï už se rozebìhlo
+
+> systemctl daemon-reload
+> systemctl start octopus
+
+> systemctl list-units :
+vidim asi správnì:
+octopus.service  loaded active running   OctopusEngine Super CryptoMachine
+
+> systemctl enable octopus
+taky zafungovalo, ale asi to padá na "modulech"
+
+> journalctl -fu octopus :
+root@octopus3:/home/pi# journalctl -fu octopus
+-- Logs begin at Thu 2017-09-21 08:59:19 UTC. --
+Sep 21 08:59:24 octopus3 systemd[1]: Starting OctopusEngine Super CryptoMachine...
+Sep 21 08:59:24 octopus3 systemd[1]: Started OctopusEngine Super CryptoMachine.
+Sep 21 08:59:26 octopus3 start3.py[520]: -----------------------------------one Loop
+Sep 21 08:59:26 octopus3 start3.py[520]: >>> octopusengine.org/api --- getServerTime()
+
+> journalctl -xv
+mi ukázalo err
+
+závìr:
+po ruèním spuštìní ze systému: ok
+nastavení automatického spuštìní: ok
+celková funkènost: na hovno ;-)
+help
