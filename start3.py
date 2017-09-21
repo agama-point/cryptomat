@@ -33,7 +33,7 @@ cL=oeCrypto5("LTC",wallAdrLTC)
 
 netOk = True #wifi test - todo
 debugPrint = True
-testMode = True
+testMode = False
 seleC = "?" #BTC/LTC
 CZKUSD = 22.5
 seleC="???"
@@ -111,33 +111,64 @@ def oneValidation():
 
     return deltaMin
 
-
 #---------------------start---------------
-def oneAction():
+def oneLoop():
  global seleC
- if (debugPrint):
-   print(">>> octopusengine.org/api --- getServerTime()")	
-   print(getServerTime())
-   print("")
+ print("------------------------one Loop")
+ neXcmd("page intro")
+ pip(1800,0.05)
+ neXcmd("page intro")
+ i=0
+ numi = 6
+ while i<numi:
+      print(i)
+      neXtxt("t0",str(numi-i))
+      i +=1
+      time.sleep(1)
+ neXtxt("t0"," ")
+ time.sleep(2)
+ 
+ neXcmd("page select")
+ time.sleep(2)
+ 
+ neXtxt("ts1","::")
+ neXtxt("ts2","BTC/USD")
+ neXtxt("ts3","???")
+ neXtxt("ts4","-")
+ neXtxt("ts5","LTC/USD")
+ neXtxt("ts6","???")
+ neXtxt("ts7","-")
+ time.sleep(2) 
       
  nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
  #addLog("T-"+nowTim+" | "+str(deltaMin)+ " min. | val:"+str(transValue)+" s")	 
  #addLog("> K:"+str(lastNum)+", $"+str(valUSD)+", a:"+str(amountS)+" s")
  addLog("T-"+nowTim+"*")
-
+ 
+ if (debugPrint):
+     print(">>> octopusengine.org/api --- getServerTime()")	
+     print(getServerTime())
+     print("")
 
  #---bitstamp BTC/USD LTC/USD
  Btcc = getBTCc()
  neXtxt("t0",str(Btcc)+" B/$ ") 
  time.sleep(1)
  Ltcc = getLTCc()
- neXtxt("t0",str(Ltcc)+" L/$ ") 
- time.sleep(2)
+ neXtxt("t0",str(Ltcc)+" L/$ ")
+ 
+ neXtxt("ts1","::")
+ neXtxt("ts2","BTC/USD")
+ neXtxt("ts3",str(Btcc))
+ neXtxt("ts4","-")
+ neXtxt("ts5","LTC/USD")
+ neXtxt("ts6",str(Ltcc))
+ neXtxt("ts7","-")
 
  if (debugPrint):
-   if (debugPrint): print(">>> bitstamp.net/api/ticker ---")	
-   print("BTC:"+str(Btcc))
-   print("LTC:"+str(Ltcc))
+     if (debugPrint): print(">>> bitstamp.net/api/ticker ---")	
+     print("BTC:"+str(Btcc))
+     print("LTC:"+str(Ltcc))
 
  if (testMode):
   print("-----------test mode: -------------")  
@@ -195,33 +226,9 @@ def oneAction():
   print(str(dtTrans) +" / "+ str(dtTransUx)) 
   print(str(dtServer) +" / "+ str(dtServerUx))
  
-  print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600)))
-  
-  
-#------------------------- start nextion
- neXcmd("page intro")
- pip(1800,0.05)
- neXcmd("page intro")
- i=0
- numi = 3
- while i<numi:
-      print(i)
-      neXtxt("t0",str(numi-i))
-      i +=1
-      time.sleep(1)
- neXtxt("t0"," ")
- time.sleep(5)
-  
- #----------------------select > read ---------------
- neXcmd("page select")
- neXtxt("ts1","::")
- neXtxt("ts2","BTC/USD")
- neXtxt("ts3",str(Btcc))
- neXtxt("ts4","-")
- neXtxt("ts5","LTC/USD")
- neXtxt("ts6",str(Ltcc))
- neXtxt("ts7","-")
+  print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600))) 
 
+ #----------------------select > read ---------------
  cekej = True
  ccnt=0
  #s2.flushInput()
@@ -412,8 +419,7 @@ def oneAction():
   
  
   for validLoop in range(8):
-     print("--- valid Loop" + str(validLoop))
-     if(isJmp1()): break     
+     print("--- valid Loop" + str(validLoop))      
      
      deltaMinVal=oneValidation()
      okTrans=False
@@ -429,7 +435,8 @@ def oneAction():
        okTxt= "NO TRANSACTION "+ " | "+str(deltaMinVal)+ " min."
        neXtxt("tb9",okTxt)
      time.sleep(10+validLoop*2)
-
+     
+     if(isJmp1()): break    
   
   pip1()
   for okLoop in range(6): 
@@ -487,17 +494,39 @@ def oneAction():
  #=====================================================================================================
 
 if __name__ == "__main__":
-    try:
+    #try:
        #alarmLoop()
        #thrnx.stop_here
             #try:
             #except:
             #	print "FD config err."
-            while True:  
-               print("-----------------------------------one Loop")       
-               oneAction()
-    except:
-        Err = True
+            
+     print("------------------------one Start")
+     
+     
+     neXcmd("page intro")
+     #pip1()
+     neXcmd("page intro")
+     neXtxt("t0","start > init")
+     time.sleep(2)
+     pip2()
+     neXtxt("t0","please wait")
+     time.sleep(2)
+     i=0
+     numi = 10
+     while i<numi:
+        print(i)
+        neXtxt("t0",str(numi-i))
+        i +=1
+        time.sleep(1)
+     neXtxt("t0"," ")  
+     
+     time.sleep(10)
+     while True:                  
+          oneLoop()
+          
+    #except:
+    #    Err = True
     #except (KeyboardInterrupt, SystemExit), e:
     #	print "oops, error", e
     #	print "trying to gracefully shutdown child thread"
@@ -508,3 +537,4 @@ if __name__ == "__main__":
 
     #print "exiting..."
     #-------------------------end --------------
+ 
