@@ -144,25 +144,27 @@ def neXcmd(cmd):
     s.write(bFF)
     time.sleep(0.001)
 
-def neXtxt(lab,label):
-    #s.write("t0.txt=")
-    ###s.write(kam)
+def neXtxt(lab,label):   
     s.write(bytes(lab.encode('ascii')))
-    #s.write(".txt=")
-    #s.write(bytes(".txt=".encode('ascii')))
     s.write(b".txt=")    
-    s.write(b22)
-    #s.write("testLAB2")
+    s.write(b22)   
     s.write(bytes(label.encode('ascii')))
     s.write(b22)
     s.write(bFF)
     s.write(bFF)
+    s.write(bFF)   
+    time.sleep(0.05)
+    #test second:
+    s.write(bytes(lab.encode('ascii')))
+    s.write(b".txt=")    
+    s.write(b22)   
+    s.write(bytes(label.encode('ascii')))
+    s.write(b22)
     s.write(bFF)
-    #s.write("\n")
-    #displLab("testLAB raspi 2 " + ver)
-    #def n(co):
-    #hh.dispWrite(chr(co))
-    time.sleep(0.05) 
+    s.write(bFF)
+    s.write(bFF)   
+    time.sleep(0.05)    
+    
 
 def nexthLib(): ##thread
  global nxRead, nexThread
@@ -194,20 +196,22 @@ def nexthLib(): ##thread
    cntx=cntx+1
 
 
-def displayQR(nextionBool,qrGet):
+def displayQR(slowZeroW,qrGet):
   global s
   os.system('qrencode -o qrcode.png '+qrGet)
   os.system('qrencode -t ASCII -o qrcode.txt '+qrGet)
 
-  neXcmd("baud=115200")
-  time.sleep(1)
-  s = serial.Serial(port='/dev/ttyS0',baudrate=115200,
+  if (not slowZeroW):
+     neXcmd("baud=115200")
+     time.sleep(0.5)
+     s = serial.Serial(port='/dev/ttyS0',baudrate=115200,
             timeout=3.0, xonxoff=False, rtscts=False,
             writeTimeout=3.0, dsrdtr=False, interCharTimeout=None)
 
-  co="fill 133,25,218,160,WHITE"
-  neXcmd(co)
-  neXcmd(co)
+     co="fill 133,25,218,160,WHITE"
+     neXcmd(co)
+     time.sleep(0.3)
+     neXcmd(co)
 
   time.sleep(1)  #nestihalo..
 
@@ -220,19 +224,20 @@ def displayQR(nextionBool,qrGet):
         point = lines[i][j:j+1]
         if point=="#":
           #print "*",
-          if nextionBool:
-             co="fill "+str(135+j*2)+","+str(25+i*4)+",3,4,BLACK"
-             neXcmd(co)
+          #if nextionBool:
+          co="fill "+str(135+j*2)+","+str(25+i*4)+",3,4,BLACK"
+          neXcmd(co)
           #else:
           #   sdPXYC(330-int(j*2.8),int(i*5)-10,2)
         
-
-  neXcmd("baud=9600")
-  time.sleep(1)
-  #s = serial.Serial(port='/dev/ttyAMA0',baudrate=9600,
-  s = serial.Serial(port='/dev/ttyS0',baudrate=9600,    
+  if (not slowZeroW):
+     neXcmd("baud=9600")
+     time.sleep(1)
+     #s = serial.Serial(port='/dev/ttyAMA0',baudrate=9600,
+     s = serial.Serial(port='/dev/ttyS0',baudrate=9600,    
             timeout=3.0, xonxoff=False, rtscts=False,
             writeTimeout=3.0, dsrdtr=False, interCharTimeout=None)
+     time.sleep(0.3)     
 
 
 # =======serial display ========================================

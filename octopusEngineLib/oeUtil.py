@@ -7,12 +7,17 @@ import json
 
 
 #---server time--- (start > RPi was off-line)
-def getServerTime():     
-     try:
-         serverTime = urllib.request.urlopen("http://www.octopusengine.eu/api/datetime.php").read()        
-     except:
-         serverTime = "Err"
-         print("Err. wifi srever time")
+def getServerTime():
+     wifiReady = False
+     while not wifiReady:
+        time.sleep(3) 
+        try:
+           serverTime = urllib.request.urlopen("http://www.octopusengine.eu/api/datetime.php").read()
+           wifiReady = True
+        except:
+           serverTime = "Err"
+           print("Err. wifi srever time")
+           
      return str(serverTime.decode('ascii'))   
 
 def addLog(txtLog):
