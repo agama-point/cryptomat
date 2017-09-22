@@ -28,10 +28,12 @@ import sys, os, subprocess, time, datetime
 from time import sleep
 from socket import gethostname, gethostbyname #getIp
 
-cB=oeCrypto5("BTC",wallAdrBTC)
-cL=oeCrypto5("LTC",wallAdrLTC)
+cB=oeCrypto5("BTC",wallAdrBTC) #Bitcoin setup
+cL=oeCrypto5("LTC",wallAdrLTC) #Litecoin setup
+#cD=oeCrypto5("DSH",wallAdrDSH)
 
 netOk = True #wifi test - todo
+slowZeroW = False
 debugPrint = True
 testMode = False
 seleC = "?" #BTC/LTC
@@ -42,29 +44,29 @@ seleC="???"
 from threading import Thread, Event
 nexThread = True #running
 
-def nexth(): ##thread
- global nxRead, nexThread
- s.flushInput()
- cntx=0
- nacti= 7 #ok
- while nexThread:     
-   try:
-    hodnota = s.read(nacti) #7
-    #print(hodnota),
-    nxRead = hodnota[2:3]
-    print(nxRead)   
-   except:
-    # print "Err.data"
-    nic = True   
+def nextionThread(): ##thread
+   global nxRead, nexThread
+   s.flushInput()
+   cntx=0
+   readBytes= 7 #ok
+   while nexThread:     
+     try:
+         hodnota = s.read(readBytes) #7
+         #print(hodnota),
+         nxRead = hodnota[2:3]
+         print(nxRead)   
+     except:
+         # print "Err.data"
+         nic = True   
    
-   time.sleep(0.7)  #0.7)
-   cntx=cntx+1
+     time.sleep(0.69)  #0.7)
+     cntx=cntx+1
 
 if __name__ == "__main__":
     # thread for reading
-    thrnx = Thread(target=nexth)
-    thrnx.daemon = True
-    thrnx.start()
+    thrNx = Thread(target=nextionThread)
+    thrNx.daemon = True
+    thrNx.start()
 
 
 #-------- fce
@@ -116,7 +118,7 @@ def oneLoop():
  global seleC
  print("------------------------one Loop")
  neXcmd("page intro")
- pip(1800,0.05)
+ pip1()
  neXcmd("page intro")
  i=0
  numi = 6
@@ -126,10 +128,12 @@ def oneLoop():
       i +=1
       time.sleep(1)
  neXtxt("t0"," ")
- time.sleep(2)
+ time.sleep(3)
  
  neXcmd("page select")
- time.sleep(2)
+ pip1()
+ neXcmd("page select")
+ time.sleep(1)
  
  neXtxt("ts1","::")
  neXtxt("ts2","BTC/USD")
@@ -138,7 +142,7 @@ def oneLoop():
  neXtxt("ts5","LTC/USD")
  neXtxt("ts6","???")
  neXtxt("ts7","-")
- time.sleep(2) 
+ time.sleep(1) 
       
  nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
  #addLog("T-"+nowTim+" | "+str(deltaMin)+ " min. | val:"+str(transValue)+" s")	 
@@ -152,10 +156,11 @@ def oneLoop():
 
  #---bitstamp BTC/USD LTC/USD
  Btcc = getBTCc()
- neXtxt("t0",str(Btcc)+" B/$ ") 
- time.sleep(1)
+ #neXtxt("t0",str(Btcc)+" B/$ ") 
+ time.sleep(0.3)
  Ltcc = getLTCc()
- neXtxt("t0",str(Ltcc)+" L/$ ")
+ #neXtxt("t0",str(Ltcc)+" L/$ ")
+ time.sleep(0.1)
  
  neXtxt("ts1","::")
  neXtxt("ts2","BTC/USD")
@@ -164,6 +169,7 @@ def oneLoop():
  neXtxt("ts5","LTC/USD")
  neXtxt("ts6",str(Ltcc))
  neXtxt("ts7","-")
+ time.sleep(1)
 
  if (debugPrint):
      if (debugPrint): print(">>> bitstamp.net/api/ticker ---")	
@@ -229,16 +235,15 @@ def oneLoop():
   print(str(dtServer-dtTrans) + " / "+str(dtUx)+ " /m/ "+str(int(dtUx/60))+ " /h/ "+str(int(dtUx/3600))) 
 
  #----------------------select > read ---------------
- cekej = True
+ waitNx = True
  ccnt=0
  #s2.flushInput()
  #for rx in range (20):
 
- while cekej: #cekani na stisk
+ while waitNx: #cekani na stisk
      ccnt=ccnt+1
      ctu = nxRead
-     #neXtxt("d0",str(ccnt) + ">"+str(ctu))
-     neXtxt("d0",str(ccnt))
+     ##neXtxt("d0",str(ccnt) + ">"+str(ctu))
      #if (ctu!="00"): 
      ###pip(1800,0.05) #ctu
      #print("---stisknuto-ok---" + ctu)
@@ -246,22 +251,22 @@ def oneLoop():
          pip(1800,0.05)
          print("---nx1")
          valUSD= 1.0
-         cekej = False
+         waitNx = False
      if (ctu==nx2):
          pip(1800,0.05)
          print("---nx2")
          valUSD= 2.0
-         cekej = False
+         waitNx = False
      if (ctu==nx3):
          pip(1800,0.05)
          print("---nx3")
          valUSD= 3.0
-         cekej = False
+         waitNx = False
      if (ctu==nx4):
          pip(1800,0.05)
          print("---nx4")
          valUSD= 5.0
-         cekej = False      
+         waitNx = False      
      if (ctu==nx5):
          pip(1800,0.05)
          print("---nx5")
@@ -271,21 +276,23 @@ def oneLoop():
          pip(1800,0.05)
          print("---nx6")
          valUSD= 10.0
-         cekej = False         
+         waitNx = False         
          
          
      #else: 
      #   print("---nic----" + ctu)
      #   nic = True
-     time.sleep(0.7)
+     time.sleep(0.6)
  
  time.sleep(2)
-
+ 
+ neXcmd("page selecoin")
+ pip1()
  neXcmd("page selecoin")
  ctu = ""
- cekej2 = True
+ waitNx2 = True
  ccnt=0
- while cekej2: #cekani na stisk
+ while waitNx2: #cekani na stisk
      ccnt=ccnt+1
      ctu = nxRead
      #neXtxt("d0",str(ccnt) + ">"+str(ctu))
@@ -294,16 +301,16 @@ def oneLoop():
      if (ctu==nxBTC):
          pip(1800,0.05)
          seleC="BTC"
-         cekej2 = False
+         waitNx2 = False
      if (ctu==nxLTC):
          pip(1800,0.05)
          seleC="LTC"
-         cekej2 = False
+         waitNx2 = False
      #if (ctu==nx3):
      #    print("nx3")
      #    cekej = False 
      
-     time.sleep(0.7)
+     time.sleep(0.57)
  print("selected currency: "+seleC)     
  #-----------------------qr----------------------     
  # if isJmp1(): text="off-line"    
@@ -311,6 +318,7 @@ def oneLoop():
  #neXtxt("d0",text)
 
  neXcmd("page qr")
+ pip1()
  neXcmd("page qr")
  #am =0.0112233
  ##valUSD=1
@@ -337,7 +345,7 @@ def oneLoop():
   text=str(amount)+" "+seleC   
   neXtxt("t5",text) 
   neXtxt("t8",wallAdrBTC[:7]+"..."+wallAdrBTC[-7:])
-  displayQR(True,"bitecoin:"+wallAdrBTC+"?amount="+str(amount))
+  displayQR(slowZeroW,"bitecoin:"+wallAdrBTC+"?amount="+str(amount))
   #
   
  if(seleC=="LTC"):
@@ -355,7 +363,7 @@ def oneLoop():
   neXtxt("t5",text) 
   neXtxt("t8",wallAdrLTC[:7]+"..."+wallAdrLTC[-7:])
   #am =0.0112233
-  displayQR(True,"litecoin:"+wallAdrLTC+"?amount="+str(amount))
+  displayQR(slowZeroW,"litecoin:"+wallAdrLTC+"?amount="+str(amount))
   
  cntWait=0
  cntWait2=0
@@ -375,9 +383,10 @@ def oneLoop():
       cntWait = cntWait+1 
 
  #pip(1800,0.05)
- pip1()   
+ 
  time.sleep(3) 
- neXcmd("page blockch") 
+ neXcmd("page blockch")
+ pip1()
  neXcmd("page blockch")
  time.sleep(3) 
  if True:  
@@ -457,14 +466,14 @@ def oneLoop():
 
   
   if okTrans: 
-     pip1()
      addLog(">>"+str(valUSD)+"$ /" +  seleC)
-     neXcmd("page thanks") 
      neXcmd("page thanks")
-     time.sleep(0.5)
-          
+     pip1()
+     neXcmd("page thanks")
+     time.sleep(3)          
      
      """
+     #------ action
      addLog(">> OK > "+str(valUSD*25)+" Kc"  )
      netLog("OkKc","BTC",valUSD*25)
      
@@ -477,19 +486,19 @@ def oneLoop():
      time.sleep(3)
      neXtxt("tt1","$ "+str(valUSD))     
      time.sleep(3)
+     """
        
-  while (not isJmp1()):
-		time.sleep(0.5)
-		nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		neXtxt("tb7","date Time:  "+str(nowTim)) 
-		neXtxt("tb8","for next action > press BUTTON ") 
-		neXtxt("tt2","next") 
+     while (not isJmp1()):
+         time.sleep(0.5)
+         #nowTim = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+         #neXtxt("tb7","date Time:  "+str(nowTim)) 
+         neXtxt("tb8","for next action > press BUTTON ") 
+         neXtxt("tt2","next") 
 		 
-		time.sleep(0.5)
-		neXtxt("tt2","prew")
-		neXtxt("tb8"," ") 
-  
-   """     
+         time.sleep(0.5)
+         neXtxt("tt2","prew")
+         neXtxt("tb8"," ") 
+      
   
  #=====================================================================================================
 
@@ -501,8 +510,7 @@ if __name__ == "__main__":
             #except:
             #	print "FD config err."
             
-     print("------------------------one Start")
-     
+     print("------------------------one Start")    
      
      neXcmd("page intro")
      #pip1()
@@ -516,9 +524,9 @@ if __name__ == "__main__":
      numi = 10
      while i<numi:
         print(i)
-        neXtxt("t0",str(numi-i))
+        neXtxt("t0","BOOT "+str(numi-i))
         i +=1
-        time.sleep(1)
+        time.sleep(2)
      neXtxt("t0"," ")  
      
      time.sleep(10)
