@@ -1,7 +1,7 @@
 import argparse
 import logging
 
-from octopusEngine.kryptomat import currency
+from octopusEngine.cryptomat import currency
 from octopusEngine.wallets import BTC, LTC
 
 parser = argparse.ArgumentParser(

@@ -9,7 +9,7 @@ from builtins import input
 
 from PIL import Image
 
-from octopusEngine.kryptomat.currency import (BitcoinCurrency,
+from octopusEngine.cryptomat.currency import (BitcoinCurrency,
                                               InvalidTransactionValue,
                                               LitecoinCurrency,
                                               NotEnoughTransactionConfirmations,
@@ -18,7 +18,7 @@ from octopusEngine.kryptomat.currency import (BitcoinCurrency,
 from octopusEngine.wallets import BTC, LTC
 
 parser = argparse.ArgumentParser(
-    description='A test script for octopusEngine.kryptomat.currency lib'
+    description='A test script for octopusEngine.cryptomat.currency lib'
 )
 parser.add_argument("-v", "--debug", help="increase output verbosity",
                     action="store_true")

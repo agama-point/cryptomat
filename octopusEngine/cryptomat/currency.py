@@ -8,7 +8,7 @@ import requests
 
 from blockr.api import Api
 from fixerio import Fixerio
-from octopusEngine.kryptomat.utils import first, parse_utc
+from octopusEngine.cryptomat.utils import first, parse_utc
 
 BITSTAMP_TICKER_BASE_URL = "https://www.bitstamp.net/api/v2/ticker_hour/{base}{to}/"
 
