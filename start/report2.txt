@@ -1,10 +1,10 @@
 > sudo chmod +x /home/pi/octopus-cryptomat/start3.py
 
-do hlavièky py pøidáno:
+do hlaviÃ¨ky py pÃ¸idÃ¡no:
 #!/usr/bin/python
 
 > sudo nano /etc/systemd/system/octopus.service
-tam mám:
+tam mÃ¡m:
 -------------------------------------------
 [Unit]
 Description=OctopusEngine Super CryptoMachine
@@ -17,17 +17,17 @@ WorkingDirectory=/home/pi/octopus-cryptomat
 [Install]
 WantedBy=multi-user.target
 -------------------------------------------
-/ ano, mezera vadila, teï u se rozebìhlo
+/ ano, mezera vadila, teÃ¯ uÅ¾ se rozebÃ¬hlo
 
 > systemctl daemon-reload
 > systemctl start octopus
 
 > systemctl list-units :
-vidim asi správnì:
+vidim asi sprÃ¡vnÃ¬:
 octopus.service  loaded active running   OctopusEngine Super CryptoMachine
 
 > systemctl enable octopus
-taky zafungovalo, ale asi to padá na "modulech"
+taky zafungovalo, ale asi to padÃ¡ na "modulech"
 
 > journalctl -fu octopus :
 root@octopus3:/home/pi# journalctl -fu octopus
@@ -38,10 +38,9 @@ Sep 21 08:59:26 octopus3 start3.py[520]: -----------------------------------one 
 Sep 21 08:59:26 octopus3 start3.py[520]: >>> octopusengine.org/api --- getServerTime()
 
 > journalctl -xv
-mi ukázalo err
+mi ukÃ¡zalo err
 
-závìr:
-po ruèním spuštìní ze systému: ok
-nastavení automatického spuštìní: ok
-celková funkènost: na hovno ;-)
-help
+zÃ¡vÃ¬r:
+po ruÃ¨nÃ­m spuÅ¡tÃ¬nÃ­ ze systÃ©mu: ok
+nastavenÃ­ automatickÃ©ho spuÅ¡tÃ¬nÃ­: ok
+musi se pockat na wifi
