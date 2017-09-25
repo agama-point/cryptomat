@@ -1,7 +1,6 @@
 > sudo chmod +x /home/pi/octopus-cryptomat/start3.py
 
-header:
-#!/usr/bin/python3
+header: #!/usr/bin/python3
 
 > sudo nano /etc/systemd/system/octopus.service
 :
