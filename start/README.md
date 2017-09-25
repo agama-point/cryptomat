@@ -6,6 +6,7 @@ header:
 > sudo nano /etc/systemd/system/octopus.service
 :
 -------------------------------------------
+<pre>
 [Unit]
 Description=OctopusEngine Super CryptoMachine
 After=network.target
@@ -16,6 +17,7 @@ WorkingDirectory=/home/pi/octopus-cryptomat
 
 [Install]
 WantedBy=multi-user.target
+</pre>
 -------------------------------------------
 
 > systemctl daemon-reload
