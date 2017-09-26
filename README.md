@@ -17,9 +17,11 @@ if exist "new" transaction in blockchain.info > action<br /><br />
 
 <br / ><hr />
 <img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/g31709zero.jpg" alt="m17" width="600">
-<br /><br />
-<hr />
+<br />
 test with Raspberry Pi Zero-W and ESP32<br /><br /><br />
+<br />
+<hr />
+
 
 <img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/machine17.png" alt="m17" width="320">
 <img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/don-BTC.png" alt="coins" width="320"><br />
