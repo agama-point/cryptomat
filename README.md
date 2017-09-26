@@ -16,3 +16,10 @@ if exist "new" transaction in blockchain.info > action<br /><br />
 
 <img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/meny3.png" alt="coins" width="320">
 
+<br / ><hr />
+<img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/don-BTC.png" alt="coins" width="320">
+
+
+
+
+
