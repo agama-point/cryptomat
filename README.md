@@ -3,8 +3,7 @@
 <img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/g31709.jpg" alt="m17" width="600">
 <br />
 
-<hr />
-<img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/machine17.png" alt="m17" width="320">
+
 <br />
 <hr />
 if exist "new" transaction in blockchain.info > action<br /><br />
@@ -18,7 +17,11 @@ if exist "new" transaction in blockchain.info > action<br /><br />
 
 <br / ><hr />
 <img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/g31709zero.jpg" alt="m17" width="600">
+<br /><br />
+<hr />
 test with Raspberry Pi Zero-W and ESP32<br /><br /><br />
+
+<img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/machine17.png" alt="m17" width="320">
 <img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/don-BTC.png" alt="coins" width="320"><br />
 <img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/don-LTC.png" alt="coins" width="320">
 
