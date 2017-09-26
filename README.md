@@ -1,4 +1,4 @@
-# cryptomat
+# Octopus CryptoMat
 (c) 2015-17 octopusengine.org | newreality.eu<br />
 <img src="https://raw.githubusercontent.com/octopusengine/cryptomat/master/nextion/g31709.jpg" alt="m17" width="600">
 <br />
